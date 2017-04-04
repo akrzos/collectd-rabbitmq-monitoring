@@ -22,7 +22,7 @@ def read(fname):
 
 setup(
     name='collectd-rabbitmq-monitoring',
-    version='0.0.1',
+    version='0.0.2',
     description='Collectd plugin for Rabbitmq.',
     long_description=read('README.rst'),
     url='https://github.com/akrzos/collectd-rabbitmq-monitoring',
@@ -30,6 +30,9 @@ setup(
     author_email='akrzos@redhat.com',
     packages=[
         'collectd_rabbitmq_monitoring',
+    ],
+    install_requires=[
+        'pyrabbit'
     ],
     license='Apache License 2.0',
     classifiers=[
