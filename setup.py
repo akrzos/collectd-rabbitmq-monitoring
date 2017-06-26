@@ -22,7 +22,7 @@ def read(fname):
 
 setup(
     name='collectd-rabbitmq-monitoring',
-    version='0.0.2',
+    version='0.0.3',
     description='Collectd plugin for Rabbitmq.',
     long_description=read('README.rst'),
     url='https://github.com/akrzos/collectd-rabbitmq-monitoring',

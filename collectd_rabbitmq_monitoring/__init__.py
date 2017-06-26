@@ -13,11 +13,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-"""Collectd python plugin to read rabbitmq metrics from rabbitmq management plugin."""
+"""Collectd python plugin to read rabbitmq metrics from rabbitmq management
+plugin.
+"""
 from pyrabbit.api import Client
+from pyrabbit.http import HTTPError
 import collectd
 import os
 import time
+
 
 def configure(configobj):
     global INTERVAL
@@ -30,12 +34,19 @@ def configure(configobj):
     port = int(config['port'][0])
     username = config['username'][0]
     password = config['password'][0]
-    queues_to_count = config['message_count']
+    queues_to_count = []
+    if 'message_count' in config:
+        queues_to_count = config['message_count']
     collectd.info('rabbitmq_monitoring: Interval: {}'.format(INTERVAL))
     cl = Client('{}:{}'.format(host, port), username, password)
-    collectd.info('rabbitmq_monitoring: Connecting to: {}:{} as user:{} password:{}'.format(host, port, username, password))
-    collectd.info('rabbitmq_monitoring: Counting messages on: {}'.format(queues_to_count))
+    collectd.info(
+        'rabbitmq_monitoring: Connecting to: {}:{} as user:{} password:{}'
+        .format(host, port, username, password))
+    collectd.info(
+        'rabbitmq_monitoring: Counting messages on: {}'
+        .format(queues_to_count))
     collectd.register_read(read, INTERVAL)
+
 
 def read(data=None):
     starttime = time.time()
@@ -43,7 +54,8 @@ def read(data=None):
     overview = cl.get_overview()
 
     # Object counts
-    for metric_instance in ['channels', 'connections', 'consumers', 'exchanges', 'queues']:
+    for metric_instance in \
+            ['channels', 'connections', 'consumers', 'exchanges', 'queues']:
         metric = collectd.Values()
         metric.plugin = 'rabbitmq_monitoring'
         metric.interval = INTERVAL
@@ -53,7 +65,8 @@ def read(data=None):
         metric.dispatch()
 
     # Aggregated Queue message stats
-    for metric_instance in ['messages', 'messages_ready', 'messages_unacknowledged']:
+    for metric_instance in \
+            ['messages', 'messages_ready', 'messages_unacknowledged']:
         metric = collectd.Values()
         metric.plugin = 'rabbitmq_monitoring'
         metric.interval = INTERVAL
@@ -67,13 +80,20 @@ def read(data=None):
         metric.interval = INTERVAL
         metric.type = 'gauge'
         metric.type_instance = 'queue_total-{}-rate'.format(metric_instance)
-        metric.values = [overview['queue_totals']['{}_details'.format(metric_instance)]['rate']]
+        metric.values = \
+            [
+                overview['queue_totals']['{}_details'.format(metric_instance)]
+                ['rate']
+            ]
         metric.dispatch()
 
     # Aggregated Message Stats
-    for metric_instance in ['ack', 'confirm', 'deliver', 'deliver_get', 'deliver_no_ack', 'get',
-            'get_no_ack', 'publish', 'publish_in', 'publish_out', 'redeliver',
-            'return_unroutable']:
+    for metric_instance in \
+            [
+                'ack', 'confirm', 'deliver', 'deliver_get', 'deliver_no_ack',
+                'get', 'get_no_ack', 'publish', 'publish_in', 'publish_out',
+                'redeliver', 'return_unroutable'
+            ]:
         metric = collectd.Values()
         metric.plugin = 'rabbitmq_monitoring'
         metric.interval = INTERVAL
@@ -87,12 +107,22 @@ def read(data=None):
         metric.interval = INTERVAL
         metric.type = 'gauge'
         metric.type_instance = 'message_total-{}-rate'.format(metric_instance)
-        metric.values = [overview['message_stats']['{}_details'.format(metric_instance)]['rate']]
+        metric.values = \
+            [
+                overview['message_stats']['{}_details'.format(metric_instance)]
+                ['rate']
+            ]
         metric.dispatch()
 
     # Configurable per-queue message counts
     for queue_name in queues_to_count:
-        messages_detail = cl.get_messages('/', queue_name)
+        messages_detail = None
+        try:
+            messages_detail = cl.get_messages('/', queue_name)
+        except HTTPError as err:
+            collectd.error(
+                'Error Opening Queue [{}] details: {}'
+                .format(queue_name, err))
         if messages_detail is None:
             count = 0
         else:
@@ -107,7 +137,10 @@ def read(data=None):
 
     timediff = time.time() - starttime
     if timediff > INTERVAL:
-        collectd.warning('rabbitmq_monitoring: Took: {} > {}'.format(round(timediff, 2),
-            INTERVAL))
+        collectd.warning(
+            'rabbitmq_monitoring: Took: {} > {}'.format(
+                round(timediff, 2),
+                INTERVAL)
+            )
 
 collectd.register_config(configure)

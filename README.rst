@@ -39,7 +39,8 @@ Configuration
            port 15672
            username guest
            password guest
-           # Put the queues you want a count of messages for here:
+           # Omit message_count if you do not want to count any messages on
+           # specific queues.
            message_count "metering.sample" "notifications.info"
          </Module>
        </Plugin>
