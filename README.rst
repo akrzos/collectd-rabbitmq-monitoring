@@ -4,7 +4,7 @@ Collectd Rabbitmq Monitoring
 Overview
 --------
 
-This plugin provides metrics from yoru running Rabbitmq cluster via
+This plugin provides metrics from a running Rabbitmq cluster via
 the rabbitmq management plugin API.
 
 Sample Graph
