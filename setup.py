@@ -13,37 +13,10 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-import os
+
 from setuptools import setup
 
-
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
 setup(
-    name='collectd-rabbitmq-monitoring',
-    version='0.0.3',
-    description='Collectd plugin for Rabbitmq.',
-    long_description=read('README.rst'),
-    url='https://github.com/akrzos/collectd-rabbitmq-monitoring',
-    author='Alex Krzos',
-    author_email='akrzos@redhat.com',
-    packages=[
-        'collectd_rabbitmq_monitoring',
-    ],
-    install_requires=[
-        'pyrabbit'
-    ],
-    license='Apache License 2.0',
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'Intended Audience :: System Administrators',
-        'License :: OSI Approved :: Apache Software License ',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Topic :: System :: Monitoring',
-    ],
+    setup_requires=['pbr'],
+    pbr=True,
 )
