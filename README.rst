@@ -1,6 +1,8 @@
 Collectd Rabbitmq Monitoring
 ============================
 
+|collectd-rabbitmq-monitoring|
+
 Overview
 --------
 
@@ -78,3 +80,6 @@ Resources
 
 .. _Rabbitmq.com: https://www.rabbitmq.com/
 .. _Collectd.org: https://collectd.org/
+
+.. |collectd-rabbitmq-monitoring| image:: https://badge.fury.io/py/collectd-rabbitmq-monitoring.svg
+    :target: https://pypi.python.org/pypi/collectd-rabbitmq-monitoring/
