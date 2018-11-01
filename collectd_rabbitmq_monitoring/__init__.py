@@ -16,8 +16,8 @@
 """Collectd python plugin to read rabbitmq metrics from rabbitmq management
 plugin.
 """
-from pyrabbit.api import Client
-from pyrabbit.http import HTTPError
+from pyrabbit2.api import Client
+from pyrabbit2.http import HTTPError
 import collectd
 import os
 import time
